@@ -4,6 +4,8 @@ const Joi = require('joi');
 const validateRequest = require('_middleware/validate-request');
 const authorize = require('_middleware/authorize')
 const tombolaService = require('./tombola.service');
+var sC = require('../socketCollection');
+const { connect } = require('../users/users.controller');
 
 // routes
 router.post('/extract', estrazioneSchema, extract);
@@ -50,16 +52,18 @@ function resumeCartelle(req, res, next) {
         .catch(next);
 }
 
+function notifyClients(message) {
+    for (socket of sC.socketCollection) {
+        //console.log(socket.connection);
+        socket.connection.sendUTF(message);
+    }
+}
+
 function extract(req, res, next) {
+    //console.log(sC.socketCollection);
     tombolaService.extract(req.body)
         .then(() => {
-            //console.log(wsServer);
-            /*
-            wsServer.clients.forEach(function each(client) {
-                console.log("Invio...");
-                client.send(req.body);
-            });
-            */
+            notifyClients("Numero "+req.body.number)
             res.json({ message: 'Saved Value: ' + req.body.number });
         })
         .catch(next);
