@@ -52,10 +52,14 @@ function resumeCartelle(req, res, next) {
         .catch(next);
 }
 
-function notifyClients(message) {
+function notifyClients(sessionId, message) {
+    console.log("Notifying for sessionId "+sessionId);
     for (socket of sC.socketCollection) {
-        //console.log(socket.connection);
-        socket.connection.sendUTF(message);
+        // sessionId = 0 => broadcast
+        if (socket.sessionId == sessionId || sessionId == 0) {
+            console.log(message, socket.connection.remoteAddress);
+            socket.connection.sendUTF(message);
+        }
     }
 }
 
@@ -63,7 +67,15 @@ function extract(req, res, next) {
     //console.log(sC.socketCollection);
     tombolaService.extract(req.body)
         .then(() => {
-            notifyClients("Numero "+req.body.number)
+            //console.log(req.body);
+            messaggio = {
+                sessionId: req.body.sessionId,
+                userId: 0,
+                command: "extract",
+                payload: req.body.number,
+                date: new Date()
+            };
+            notifyClients(req.body.sessionId, JSON.stringify(messaggio));
             res.json({ message: 'Saved Value: ' + req.body.number });
         })
         .catch(next);

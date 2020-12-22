@@ -35,15 +35,22 @@ let wsServer = new WebSocketServer({
 });
 // Gestione degli eventi
 wsServer.on('request', function (request) {
-    //console.log("New request", request.origin);
     var connection = request.accept(null, request.origin);
+    var sessionId = +request.resource.replace("/", "");
     sC.socketCollection.push({
-        id: 0,
+        sessionId: sessionId,
         connection: connection,
     });
     //console.log(sC.socketCollection);
-
-    connection.sendUTF("Avvio della sessione !")
+    console.log("Session ID: "+sessionId)
+    messaggio = {
+        sessionId: sessionId,
+        userId: 0,
+        command: "startup",
+        payload: sessionId,
+        date: new Date()
+    };
+    connection.sendUTF(JSON.stringify(messaggio))
 
     connection.on('message', function (message) {
         // Metodo eseguito alla ricezione di un messaggio

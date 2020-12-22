@@ -8,6 +8,8 @@ function model(sequelize) {
         costoCartella: { type: DataTypes.FLOAT, allowNull: false },
         // 0: creata, 1: in corso, 2: finita
         stato: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        ultimoRisultato: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        userIdUltimoRisultato: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 }
     };
 
     const options = {

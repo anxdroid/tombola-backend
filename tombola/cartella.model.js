@@ -8,6 +8,7 @@ function model(sequelize) {
         userId: { type: DataTypes.INTEGER, allowNull: false },
         pagata: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
         righe: { type: DataTypes.STRING, allowNull: false, defaultValue: '[]' },
+        risultati: { type: DataTypes.STRING, allowNull: false, defaultValue: '[]' },
         uuid: { type: DataTypes.STRING, allowNull: false }
     };
 
