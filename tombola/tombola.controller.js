@@ -36,11 +36,6 @@ function sessioneSchema(req, res, next) {
     validateRequest(req, next, schema);
 }
 
-function checkResult(sessionId) {
-
-
-}
-
 function saveCartella(req, res, next) {
     //console.log(req.body);
     var sessionId = +req.body.sessionId;
@@ -61,9 +56,9 @@ function saveCartella(req, res, next) {
                                 .then(cartelle => {
                                     tombolaService.getCartelleSessionSeq(sessionId, session.ultimoSeq)
                                         .then(cartelleSeq => {
-                                            console.log(cartelleSeq.length + " cartelle for session " + sessionId + " seq " + session.ultimoSeq + " out of " + cartelle.length)
+                                            //console.log(cartelleSeq.length + " cartelle for session " + sessionId + " seq " + session.ultimoSeq + " out of " + cartelle.length)
                                             if (cartelleSeq.length == +cartelle.length) {
-                                                console.log("All cartelle are in sync")
+                                                //console.log("All cartelle are in sync")
                                                 var winners = [];
                                                 var nuovoRisultato = 0;
                                                 for (cartella of cartelleSeq) {
@@ -71,7 +66,7 @@ function saveCartella(req, res, next) {
                                                     for (risultato of risultati) {
                                                         if (+risultato > +(session.ultimoRisultato) && +risultato > 1) {
                                                             nuovoRisultato = +risultato;
-                                                            console.log("Last result: " + session.ultimoRisultato, "Cartella " + cartella.id + " result: " + risultati);
+                                                            //console.log("Last result: " + session.ultimoRisultato, "Cartella " + cartella.id + " result: " + risultati);
                                                             if (!winners.includes(cartella.userId)) {
                                                                 winners.push(cartella.userId);
                                                             }
@@ -81,24 +76,25 @@ function saveCartella(req, res, next) {
 
                                                 if (winners.length > 0) {
                                                     if (winners.length == 1) {
+                                                        console.log("Last result: " + session.ultimoRisultato + ", Winners " + winners + " (" + nuovoRisultato + ")");
                                                         session.ultimoRisultato = nuovoRisultato;
                                                         session.userIdUltimoRisultato = winners[0];
                                                         //console.log(session.userIdUltimoRisultato);
 
-
+                                                        
                                                         tombolaService.saveSession(session.dataValues)
                                                             .then(sessionUpdated => {
-                                                                console.log("Last result: " + session.ultimoRisultato + ", Winners " + winners + " (" + nuovoRisultato + ")");
+                                                                
                                                                 messaggio = {
-                                                                    sessionId: message.sessionId,
-                                                                    userId: message.userId,
+                                                                    sessionId: sessionId,
+                                                                    userId: 0,
                                                                     command: "notifyWinner",
                                                                     // TODO: gestire i premi
                                                                     payload: { "winner": session.userIdUltimoRisultato, "seq": session.ultimoSeq, "result": session.ultimoRisultato, "prize": 0 },
                                                                     date: new Date()
                                                                 };
                                                                 //console.log(messaggio);
-                                                                tombolaService.notifyClients(sessionId, message.userId, JSON.stringify(messaggio))
+                                                                tombolaService.notifyClients(sessionId, 0, JSON.stringify(messaggio))
                                                             })
                                                             .catch(next);
                                                     } else {
