@@ -2,54 +2,117 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('_helpers/db');
+var sC = require('../socketCollection');
+const { Op } = require("sequelize");
 
 module.exports = {
-    extract,
-    newSession,
-    listSessions,
-    resumeSession,
-    getSession,
-    saveCartella,
-    resumeCartelle
+  extract,
+  saveSession,
+  listSessions,
+  resumeSession,
+  getSession,
+  saveCartella,
+  resumeCartelle,
+  checkResults,
+  notifyClients,
+  getCartelleSession,
+  getCartelleSessionSeq
 };
 
-async function extract(params) {
-    await db.Estrazione.create(params);
+function notifyClients(sessionId, userId, message) {
+  //console.log("Notifying for sessionId " + sessionId);
+  for (socket of sC.socketCollection) {
+    // sessionId = 0 => broadcast
+    if (socket.sessionId == sessionId || sessionId == 0) {
+      if (userId != socket.userId) {
+        //console.log(message, socket.connection.remoteAddress);
+        socket.connection.sendUTF(message);
+      }
+    }
+  }
 }
 
+async function extract(params) {
+  await db.Estrazione.create(params);
+}
+
+
+
 async function saveCartella(params) {
+  if (params.id == null || +params.id == 0) {
+    params.id = null;
     return db.Cartella.create(params);
+  }
+  return db.Cartella.update(params, {
+    where: {
+      id: params.id
+    }
+  });
 }
 
 async function resumeCartelle(sessionId, userId) {
-    return await db.Cartella.findAll({
-        where: {
-          sessionId: sessionId,
-          userId: userId
-        }
-      });
+  return await db.Cartella.findAll({
+    where: {
+      sessionId: sessionId,
+      userId: userId
+    }
+  });
 }
 
-function newSession(params) {
+async function checkResults(sessionId, result) {
+  return await db.Cartella.findAll({
+    where: {
+      sessionId: sessionId,
+      risultati: { [Op.like]: '%' + result + '%' }
+    }
+  });
+}
+
+function saveSession(params) {
+  if (params.id == null || +params.id == 0) {
+    params.id = null;
     return db.Sessione.create(params);
+  }
+  return db.Sessione.update(params, {
+    where: {
+      id: params.id
+    }
+  });
 }
 
 async function listSessions() {
-    return await db.Sessione.findAll();
+  return await db.Sessione.findAll();
 }
 
 async function resumeSession(sessionId) {
-    return await db.Estrazione.findAll({
-        where: {
-          sessionId: sessionId
-        }
-      });
+  return await db.Estrazione.findAll({
+    where: {
+      sessionId: sessionId
+    }
+  });
 }
 
 async function getSession(sessionId) {
-    return await db.Sessione.findOne({
-        where: {
-          id: sessionId
-        }
-      });
+  return await db.Sessione.findOne({
+    where: {
+      id: sessionId
+    }
+  });
+}
+
+async function getCartelleSession(sessionId) {
+  return await db.Cartella.findAll({
+    where: {
+      sessionId: sessionId,
+    }
+  });
+}
+
+async function getCartelleSessionSeq(sessionId, seq) {
+  return await db.Cartella.findAll({
+    where: {
+      sessionId: sessionId,
+      seq: seq
+    }
+  });
 }

@@ -9,6 +9,7 @@ function model(sequelize) {
         pagata: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
         righe: { type: DataTypes.STRING, allowNull: false, defaultValue: '[]' },
         risultati: { type: DataTypes.STRING, allowNull: false, defaultValue: '[]' },
+        seq: { type: DataTypes.NUMBER, allowNull: false, defaultValue: -1 },
         uuid: { type: DataTypes.STRING, allowNull: false }
     };
 
