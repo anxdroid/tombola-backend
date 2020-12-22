@@ -41,6 +41,8 @@ function saveCartella(req, res, next) {
     var sessionId = +req.body.sessionId;
     tombolaService.getSession(sessionId)
         .then(session => {
+            session = session.get({ plain: true });
+            //console.log(session);
             ca = req.body.cartella;
             //console.log(session.ultimoSeq, ca.seq);
             if (session.ultimoSeq == ca.seq) {
@@ -79,12 +81,11 @@ function saveCartella(req, res, next) {
                                                         console.log("Last result: " + session.ultimoRisultato + ", Winners " + winners + " (" + nuovoRisultato + ")");
                                                         session.ultimoRisultato = nuovoRisultato;
                                                         session.userIdUltimoRisultato = winners[0];
-                                                        //console.log(session.userIdUltimoRisultato);
-
+                                                        //console.log(session);
                                                         
-                                                        tombolaService.saveSession(session.dataValues)
+                                                        tombolaService.saveSession(session)
                                                             .then(sessionUpdated => {
-                                                                
+
                                                                 messaggio = {
                                                                     sessionId: sessionId,
                                                                     userId: 0,
@@ -93,8 +94,10 @@ function saveCartella(req, res, next) {
                                                                     payload: { "winner": session.userIdUltimoRisultato, "seq": session.ultimoSeq, "result": session.ultimoRisultato, "prize": 0 },
                                                                     date: new Date()
                                                                 };
-                                                                //console.log(messaggio);
+                                                                //console.log(sessionUpdated);
                                                                 tombolaService.notifyClients(sessionId, 0, JSON.stringify(messaggio))
+
+                                                                res.json(result);
                                                             })
                                                             .catch(next);
                                                     } else {
@@ -103,12 +106,14 @@ function saveCartella(req, res, next) {
                                                 } else {
                                                     res.json(result);
                                                 }
+                                            }else{
+                                                res.json(result);  
                                             }
                                         })
                                         .catch(next);
                                 })
                                 .catch(next);
-                        }else{
+                        } else {
                             res.json(result);
                         }
                     })
