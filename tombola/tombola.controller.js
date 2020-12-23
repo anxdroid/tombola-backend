@@ -82,7 +82,7 @@ function saveCartella(req, res, next) {
                 tombolaService.saveCartella(body)
                     .then(result => {
                         // controllo solo dalla seconda estrazione
-                        if (session.ultimoSeq >= 1) {
+                        //if (session.ultimoSeq >= 1) {
                             // carico il numero di cartelle della sessione
                             tombolaService.getCartelleSessionCount(sessionId)
                                 .then(cartelleCount => {
@@ -92,9 +92,11 @@ function saveCartella(req, res, next) {
                                             // tutte le cartelle sono in sync
                                             //console.log("tot: "+cartelleCount, "sync'd: "+cartelleSeqCount);
                                             if (cartelleSeqCount == cartelleCount) {
+                                                var payload = {seq: session.ultimoSeq, sync:100};
+                                                tombolaService.sendToClients(sessionId, 0, "notifySyncStatus", payload);
                                                 //console.log("all sync'd !", session);
-                                                var nuovoRisultato = 1+(session.ultimoRisultato);
-                                                
+                                                var nuovoRisultato = 1 + (session.ultimoRisultato);
+
                                                 if (nuovoRisultato == 1) {
                                                     nuovoRisultato = 2;
                                                 } else if (nuovoRisultato > 5) {
@@ -124,13 +126,14 @@ function saveCartella(req, res, next) {
                                                                     console.log(winners, "Tombola !");
                                                                 }
                                                                 session.ultimoRisultato = nuovoRisultato;
-                                                                
+
                                                                 session.userIdUltimoRisultato = winners[0];
 
                                                                 //aggiorno la sessione con l'ultimo vincitore
                                                                 tombolaService.saveSession(session)
                                                                     .then(sessionUpdated => {
                                                                         // notifico via websocket la vincita
+                                                                        /*
                                                                         messaggio = {
                                                                             sessionId: sessionId,
                                                                             userId: 0,
@@ -140,6 +143,9 @@ function saveCartella(req, res, next) {
                                                                             date: new Date()
                                                                         };
                                                                         tombolaService.notifyClients(sessionId, 0, JSON.stringify(messaggio))
+                                                                        */
+                                                                        var payload = { "winner": session.userIdUltimoRisultato, "seq": session.ultimoSeq, "result": session.ultimoRisultato, "prize": 0 };
+                                                                        tombolaService.sendToClients(sessionId, 0, "notifyWinner", payload);
                                                                         res.json(sessionUpdated);
                                                                     })
                                                                     .catch(next);
@@ -161,9 +167,9 @@ function saveCartella(req, res, next) {
                                         .catch(next);
                                 })
                                 .catch(next);
-                        } else {
-                            res.json(result);
-                        }
+                        //} else {
+                        //    res.json(result);
+                        //}
                     })
 
                     .catch(next);

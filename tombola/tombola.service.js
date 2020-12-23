@@ -17,6 +17,7 @@ module.exports = {
   resumeCartelle,
   checkResults,
   notifyClients,
+  sendToClients,
   getCartelleSession,
   getCartelleSessionCount,
   getCartelleSessionSeq,
@@ -35,6 +36,18 @@ function notifyClients(sessionId, userId, message) {
       }
     }
   }
+}
+
+function sendToClients(sessionId, userId, command, payload) {
+  messaggio = {
+    sessionId: sessionId,
+    userId: userId,
+    command: command,
+    // TODO: gestire i premi
+    payload: payload,
+    date: new Date()
+  };
+  notifyClients(sessionId, userId, JSON.stringify(messaggio));
 }
 
 async function extract(params) {
