@@ -21,7 +21,7 @@ module.exports = {
   getCartelleSessionCount,
   getCartelleSessionSeq,
   getCartelleSessionSeqCount,
-  getMaxResultSeq
+  getCartelleSessionSeqResult
 };
 
 function notifyClients(sessionId, userId, message) {
@@ -137,19 +137,13 @@ async function getCartelleSessionSeqCount(sessionId, seq) {
   });
 }
 
-async function getMaxResultSeq(sessionId, seq) {
-  const sequelize = new Sequelize({dialect: 'sqlite', storage: 'data/dev-db.sqlite3'})
+async function getCartelleSessionSeqResult(sessionId, seq, maxRisultato) {
   return await db.Cartella.findAll({
-    attributes: [
-      'sessionId',
-      'seq'
-      [sequelize.fn('MAX', sequelize.col('maxRisultato')), 'maxRisultato']
-      [sequelize.fn('GROUP_CONCAT', sequelize.col('userId')), 'userId']
-    ],
-    group: ['sessionId', 'seq'],
     where: {
       sessionId: sessionId,
-      seq: seq
+      seq: seq,
+      // carico le cartelle col premio corrente e quelle che hanno fatto tombola
+      [Op.or]: [{ maxRisultato: maxRisultato }, { totRisultato: 15 }]
     }
   });
 }

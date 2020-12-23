@@ -10,6 +10,7 @@ function model(sequelize) {
         righe: { type: DataTypes.STRING, allowNull: false, defaultValue: '[]' },
         risultati: { type: DataTypes.STRING, allowNull: false, defaultValue: '[]' },
         maxRisultato: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+        totRisultato: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         seq: { type: DataTypes.NUMBER, allowNull: false, defaultValue: -1 },
         uuid: { type: DataTypes.STRING, allowNull: false }
     };

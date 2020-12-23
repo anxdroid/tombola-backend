@@ -14,7 +14,7 @@ async function initialize() {
 
     // connect to db
     //const sequelize = new Sequelize(database, user, password, { host: '192.168.1.9', dialect: 'mysql' });
-    const sequelize = new Sequelize({dialect: 'sqlite', storage: 'data/dev-db.sqlite3'})
+    const sequelize = new Sequelize({dialect: 'sqlite', storage: 'data/dev-db.sqlite3', logging: false})
     
     // init models and add them to the exported db object
     db.User = require('../users/user.model')(sequelize);
