@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const db = require('_helpers/db');
 var sC = require('../socketCollection');
 const { Op } = require("sequelize");
+const { Sequelize } = require('sequelize');
+
 
 module.exports = {
   extract,
@@ -16,7 +18,10 @@ module.exports = {
   checkResults,
   notifyClients,
   getCartelleSession,
-  getCartelleSessionSeq
+  getCartelleSessionCount,
+  getCartelleSessionSeq,
+  getCartelleSessionSeqCount,
+  getMaxResultSeq
 };
 
 function notifyClients(sessionId, userId, message) {
@@ -35,8 +40,6 @@ function notifyClients(sessionId, userId, message) {
 async function extract(params) {
   await db.Estrazione.create(params);
 }
-
-
 
 async function saveCartella(params) {
   if (params.id == null || +params.id == 0) {
@@ -108,8 +111,42 @@ async function getCartelleSession(sessionId) {
   });
 }
 
+async function getCartelleSessionCount(sessionId) {
+  return await db.Cartella.count({
+    where: {
+      sessionId: sessionId,
+    }
+  });
+}
+
 async function getCartelleSessionSeq(sessionId, seq) {
   return await db.Cartella.findAll({
+    where: {
+      sessionId: sessionId,
+      seq: seq
+    }
+  });
+}
+
+async function getCartelleSessionSeqCount(sessionId, seq) {
+  return await db.Cartella.count({
+    where: {
+      sessionId: sessionId,
+      seq: seq
+    }
+  });
+}
+
+async function getMaxResultSeq(sessionId, seq) {
+  const sequelize = new Sequelize({dialect: 'sqlite', storage: 'data/dev-db.sqlite3'})
+  return await db.Cartella.findAll({
+    attributes: [
+      'sessionId',
+      'seq'
+      [sequelize.fn('MAX', sequelize.col('maxRisultato')), 'maxRisultato']
+      [sequelize.fn('GROUP_CONCAT', sequelize.col('userId')), 'userId']
+    ],
+    group: ['sessionId', 'seq'],
     where: {
       sessionId: sessionId,
       seq: seq

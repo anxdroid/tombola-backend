@@ -22,7 +22,7 @@ app.use(errorHandler);
 const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 4000;
 app.listen(port, () => console.log('Server listening on port ' + port));
 
-//
+// Websocket server
 var WebSocketServer = require('websocket').server;
 var http = require('http');
 var server = http.createServer(function (request, response) {
@@ -35,35 +35,23 @@ let wsServer = new WebSocketServer({
     httpServer: server
 });
 
-function notifyResult(message) {
-    //console.log(message);
-    tombolaService.getSession(message.sessionId)
-        .then(result => {
-            //console.log(result) 
-            if (+result.ultimoRisultato < +message.payload) {
-                console.log(" New result " + message.payload + " from " + message.userId + "!");
-                tombolaService.checkResults(message.sessionId, message.payload)
-                    .then(result => {console.log(result)})
-                    .catch(err => { console.log(err) });
-            }
-        })
-        .catch(err => { console.log(err) });
-}
 
-// Gestione degli eventi
 wsServer.on('request', function (request) {
+    // nuova richiesta dal backlog
     var connection = request.accept(null, request.origin);
+    // estraggo sessionid e userid dalla url
     var tokens = request.resource.split("/");
-    //console.log(request.resource, tokens)
     var sessionId = +tokens[1];
     var userId = +tokens[2];
+    // salvo la connessione
     sC.socketCollection.push({
         sessionId: sessionId,
         userId: userId,
         connection: connection,
     });
 
-    console.log("Session ID: "+sessionId+" User ID: "+userId);
+    //console.log("Session ID: "+sessionId+" User ID: "+userId);
+
     messaggio = {
         sessionId: sessionId,
         userId: 0,
@@ -71,21 +59,14 @@ wsServer.on('request', function (request) {
         payload: sessionId,
         date: new Date()
     };
-    //connection.sendUTF(JSON.stringify(messaggio))
     tombolaService.notifyClients(sessionId, 0, JSON.stringify(messaggio))
 
+    // handler per nuovo messaggio
     connection.on('message', function (message) {
         // Metodo eseguito alla ricezione di un messaggio
         //console.log(message);
         if (message.type === 'utf8') {
             message = JSON.parse(message.utf8Data);
-
-            /*
-            if (message.command == "notifyResult") {
-                notifyResult(message);
-            }
-            */
-
             messaggio = {
                 sessionId: message.sessionId,
                 userId: message.userId,
@@ -93,11 +74,12 @@ wsServer.on('request', function (request) {
                 payload: message.payload,
                 date: new Date()
             };
-            //console.log(messaggio);
             tombolaService.notifyClients(sessionId, message.userId, JSON.stringify(messaggio))
         }
     });
+    // handler per chiusura connessione
     connection.on('close', function (connection) {
         // Metodo eseguito alla chiusura della connessione
+        console.log("Closed websocket session")
     });
 });

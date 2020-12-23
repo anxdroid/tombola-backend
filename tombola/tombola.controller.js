@@ -14,6 +14,7 @@ router.post('/saveSession', saveSession);
 router.get('/list', listSessions);
 router.get('/resume/:sessionId', resumeSession);
 router.get('/get/:sessionId', getSession);
+router.get('/test/:sessionId/:seq', test);
 
 module.exports = router;
 
@@ -34,6 +35,28 @@ function sessioneSchema(req, res, next) {
         costoCartella: Joi.number().required()
     });
     validateRequest(req, next, schema);
+}
+
+function test(req, res, next) {
+    //console.log(req.params);
+    var sessionId = req.params.sessionId;
+    var seq = req.params.seq;
+    tombolaService.getCartelleSessionCount(sessionId)
+        .then(data1 => {
+            //console.log(data1);
+            tombolaService.getCartelleSessionSeqCount(sessionId, seq)
+                .then(data2 => {
+                    //console.log(data2);
+                    tombolaService.getMaxResultSeq(sessionId, seq)
+                        .then(data3 => {
+                            //console.log(data3);
+                            res.json({ data1: data1, data2: data2, data3: data3 })
+                        })
+                        .catch(next);
+                })
+                .catch(next);
+        })
+        .catch(next);
 }
 
 function saveCartella(req, res, next) {
@@ -82,7 +105,7 @@ function saveCartella(req, res, next) {
                                                         session.ultimoRisultato = nuovoRisultato;
                                                         session.userIdUltimoRisultato = winners[0];
                                                         //console.log(session);
-                                                        
+
                                                         tombolaService.saveSession(session)
                                                             .then(sessionUpdated => {
 
@@ -106,8 +129,8 @@ function saveCartella(req, res, next) {
                                                 } else {
                                                     res.json(result);
                                                 }
-                                            }else{
-                                                res.json(result);  
+                                            } else {
+                                                res.json(result);
                                             }
                                         })
                                         .catch(next);
