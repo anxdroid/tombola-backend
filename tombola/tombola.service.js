@@ -16,6 +16,7 @@ module.exports = {
   saveCartella,
   resumeCartelle,
   checkResults,
+  getPremioByResult,
   notifyClients,
   sendToClients,
   getCartelleSession,
