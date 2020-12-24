@@ -135,7 +135,7 @@ function saveCartella(req, res, next) {
                                                                     // notifico via websocket la vincita
                                                                     var payload = { "winners": winners, "seq": session.ultimoSeq, "result": session.ultimoRisultato};
                                                                     tombolaService.sendToClients(sessionId, 0, "notifyWinners", payload);
-                                                                    res.json(sessionUpdated);
+                                                                    res.json(result);
                                                                 })
                                                                 .catch(next);
                                                         //} else {  

@@ -10,7 +10,7 @@ function model(sequelize) {
         stato: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
         ultimoRisultato: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 },
         userIdUltimoRisultato: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-        ultimoSeq: { type: DataTypes.NUMBER, allowNull: false, defaultValue: -1 },
+        ultimoSeq: { type: DataTypes.INTEGER, allowNull: false, defaultValue: -1 },
     };
 
     const options = {

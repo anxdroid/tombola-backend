@@ -7,7 +7,7 @@ function model(sequelize) {
         sessionId: { type: DataTypes.INTEGER, allowNull: false },
         userId: { type: DataTypes.INTEGER, allowNull: false },
         number: { type: DataTypes.INTEGER, allowNull: false },
-        seq: { type: DataTypes.NUMBER, allowNull: false, defaultValue: -1 },
+        seq: { type: DataTypes.INTEGER, allowNull: false, defaultValue: -1 },
     };
 
     const options = {
