@@ -52,6 +52,7 @@ wsServer.on('request', function (request) {
     // nuova richiesta dal backlog
     console.log(request);
     var connection = request.accept(null, request.origin);
+    console.log("accepting from", request.origin);
     // estraggo sessionid e userid dalla url
     var tokens = request.resource.split("/");
     var sessionId = +tokens[1];
