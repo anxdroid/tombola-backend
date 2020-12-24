@@ -23,5 +23,5 @@ async function initialize() {
     db.Cartella = require('../tombola/cartella.model')(sequelize);
 
     // sync all models with database
-    await sequelize.sync({ force: true });
+    await sequelize.sync({ force: false });
 }
