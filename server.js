@@ -48,8 +48,6 @@ let wsServer = new WebSocketServer({
     httpServer: server
 });
 
-server.listen(4443);
-
 wsServer.on('request', function (request) {
     // nuova richiesta dal backlog
     console.log(request);
@@ -98,3 +96,5 @@ wsServer.on('request', function (request) {
         console.log("Closed websocket session")
     });
 });
+
+server.listen(4443);
