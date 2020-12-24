@@ -13,7 +13,7 @@ async function initialize() {
     //await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
 
     // connect to db
-    const sequelize = new Sequelize(database, user, password, { host: '192.168.1.5', dialect: 'mysql' });
+    const sequelize = new Sequelize(database, user, password, { host: '192.168.1.5', dialect: 'mysql', logging: false });
     //const sequelize = new Sequelize({dialect: 'sqlite', storage: 'data/dev-db.sqlite3', logging: false})
     
     // init models and add them to the exported db object

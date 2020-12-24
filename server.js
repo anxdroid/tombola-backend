@@ -31,9 +31,8 @@ app.use(errorHandler);
 
 // start server
 const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 4000;
-app.listen(port, () => console.log('Server listening on port ' + port));
+//app.listen(port, () => console.log('Server listening on port ' + port));
 var server = https.createServer(options, app)
-server.listen(4443);
 
 // Websocket server
 
@@ -49,9 +48,11 @@ let wsServer = new WebSocketServer({
     httpServer: server
 });
 
+server.listen(4443);
 
 wsServer.on('request', function (request) {
     // nuova richiesta dal backlog
+    console.log(request);
     var connection = request.accept(null, request.origin);
     // estraggo sessionid e userid dalla url
     var tokens = request.resource.split("/");
