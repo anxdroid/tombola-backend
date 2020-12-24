@@ -1,6 +1,10 @@
 ﻿require('rootpath')();
 const express = require('express');
 const app = express();
+var http = require('http');
+
+const https = require("https"),
+    fs = require("fs");
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const errorHandler = require('_middleware/error-handler');
@@ -10,6 +14,11 @@ const tombolaService = require('./tombola/tombola.service');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
+
+const options = {
+    key: fs.readFileSync("/etc/letsencrypt/live/antopaoletti.ddns.net/privkey.pem"),
+    cert: fs.readFileSync("/etc/letsencrypt/live/antopaoletti.ddns.net/fullchain.pem")
+};
 
 // api routes
 app.use('/users', require('./users/users.controller'));
@@ -21,10 +30,10 @@ app.use(errorHandler);
 // start server
 const port = process.env.NODE_ENV === 'production' ? (process.env.PORT || 80) : 4000;
 app.listen(port, () => console.log('Server listening on port ' + port));
+https.createServer(options, app).listen(4443);
 
 // Websocket server
 var WebSocketServer = require('websocket').server;
-var http = require('http');
 var server = http.createServer(function (request, response) {
     // Qui possiamo processare la richiesta HTTP
     // Dal momento che ci interessano solo le WebSocket, non dobbiamo implementare nulla
