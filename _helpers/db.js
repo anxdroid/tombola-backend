@@ -9,11 +9,11 @@ initialize();
 async function initialize() {
     // create db if it doesn't already exist
     const { host, port, user, password, database } = config.database;
-    const connection = await mysql.createConnection({ host, port, user, password });
-    await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
+    //const connection = await mysql.createConnection({ host, port, user, password });
+    //await connection.query(`CREATE DATABASE IF NOT EXISTS \`${database}\`;`);
 
     // connect to db
-    const sequelize = new Sequelize(database, user, password, { host: '127.0.0.1', dialect: 'mysql' });
+    const sequelize = new Sequelize(database, user, password, { host: '192.168.1.5', dialect: 'mysql' });
     //const sequelize = new Sequelize({dialect: 'sqlite', storage: 'data/dev-db.sqlite3', logging: false})
     
     // init models and add them to the exported db object

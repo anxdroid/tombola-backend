@@ -16,8 +16,8 @@ app.use(bodyParser.json());
 app.use(cors());
 
 const options = {
-    key: fs.readFileSync("/etc/letsencrypt/live/antopaoletti.ddns.net/privkey.pem"),
-    cert: fs.readFileSync("/etc/letsencrypt/live/antopaoletti.ddns.net/fullchain.pem")
+    key: fs.readFileSync("./privkey.pem"),
+    cert: fs.readFileSync("./fullchain.pem")
 };
 
 // api routes
