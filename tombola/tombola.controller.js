@@ -165,6 +165,7 @@ function extract(req, res, next) {
                 .then(session => {
                     session = session.get({ plain: true });
                     //console.log(req.body);
+                    /*
                     messaggio = {
                         sessionId: sessionId,
                         userId: 0,
@@ -173,6 +174,8 @@ function extract(req, res, next) {
                         date: new Date()
                     };
                     tombolaService.notifyClients(req.body.sessionId, req.body.userId, JSON.stringify(messaggio));
+                    */
+                   tombolaService.sendToClients(req.body.sessionId, req.body.userId, 0, "extract", {"number": req.body.number, "seq": req.body.seq})
                     if (session.stato == 0) {
                         session.stato = 1;
                         tombolaService.saveSession(session)
