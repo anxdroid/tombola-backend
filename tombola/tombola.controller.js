@@ -169,7 +169,7 @@ function extract(req, res, next) {
                         sessionId: sessionId,
                         userId: 0,
                         command: "extract",
-                        payload: '{"number":' + req.body.number + ', "seq":' + req.body.seq + '}',
+                        payload: {"number": req.body.number, "seq": req.body.seq},
                         date: new Date()
                     };
                     tombolaService.notifyClients(req.body.sessionId, req.body.userId, JSON.stringify(messaggio));
