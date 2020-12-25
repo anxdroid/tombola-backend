@@ -69,7 +69,15 @@ wsServer.on('request', function (request) {
             //console.log(message);
             message = JSON.parse(message.utf8Data);
             //console.log(message);
-            tombolaService.sendToClients(sessionId, message.userId, 0, message.command, message.payload);
+            if (message.payload.users !== undefined) {
+                // reinvio a un gruppo limitato di utente
+                for (var userId of message.payload.users) {
+                    tombolaService.sendToClients(sessionId, message.userId, userId, message.command, message.payload);
+                }
+            }else{
+                // reinvio in broadcast
+                tombolaService.sendToClients(sessionId, message.userId, 0, message.command, message.payload);
+            }
         }
     });
     // handler per chiusura connessione
