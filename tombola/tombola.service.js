@@ -30,10 +30,8 @@ module.exports = {
 function searchConnection(sessionId, userId) {
   for (socket of sC.socketCollection) {
     // sessionId = 0 => broadcast
-    if (socket.sessionId == sessionId || sessionId == 0) {
-      if (userId != socket.userId) {
-        return socket;
-      }
+    if (socket.sessionId == sessionId && userId == socket.userId) {
+      return socket;
     }
   }
   return null;
@@ -45,12 +43,14 @@ function notifyClients(sessionId, userId, message) {
     socket = searchConnection(sessionId, userId);
     if (socket != null) {
       socket.connection.sendUTF(message);
-    }else{
-      console.log("Connection not found !", sessionId+" "+userId);
+    } else {
+      console.log("Connection not found !", sessionId + " " + userId);
     }
-  }else{
+  } else {
     for (socket of sC.socketCollection) {
-      socket.connection.sendUTF(message);
+      if (userId != socket.userId) {
+        socket.connection.sendUTF(message);
+      }
     }
   }
 }
