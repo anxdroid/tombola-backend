@@ -56,11 +56,7 @@ wsServer.on('request', function (request) {
         });
     }else{
         console.log("Resumed websocket connection", connection.remoteAddresses+" (userId: "+userId+", sessionId: "+sessionId+")")
-        socket = {
-            sessionId: sessionId,
-            userId: userId,
-            connection: connection,
-        };
+        socket.connection = connection;
     }
 
     //console.log("Session ID: "+sessionId+" User ID: "+userId);

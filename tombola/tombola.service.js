@@ -40,6 +40,7 @@ function searchConnection(sessionId, userId) {
 function notifyClients(sessionId, userId, message) {
   //console.log("Notifying for sessionId " + sessionId);
   if (userId != 0) {
+    console.log("Msg from "+userId, message);
     socket = searchConnection(sessionId, userId);
     if (socket != null) {
       socket.connection.sendUTF(message);
@@ -47,6 +48,7 @@ function notifyClients(sessionId, userId, message) {
       console.log("Connection not found !", sessionId + " " + userId);
     }
   } else {
+    console.log("Broadcast", message)
     for (socket of sC.socketCollection) {
       if (userId != socket.userId) {
         socket.connection.sendUTF(message);

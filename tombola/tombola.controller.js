@@ -18,25 +18,6 @@ router.get('/test/:sessionId', test);
 
 module.exports = router;
 
-function estrazioneSchema(req, res, next) {
-    const schema = Joi.object({
-        sessionId: Joi.number().required(),
-        userId: Joi.number().required(),
-        number: Joi.number().required()
-    });
-    validateRequest(req, next, schema);
-}
-
-function sessioneSchema(req, res, next) {
-    const schema = Joi.object({
-        userId: Joi.number().required(),
-        ultimoSeq: Joi.number().required(),
-        //id: Joi.number().required(),
-        costoCartella: Joi.number().required()
-    });
-    validateRequest(req, next, schema);
-}
-
 function test(req, res, next) {
     //console.log(req.params);
     var sessionId = req.params.sessionId;
