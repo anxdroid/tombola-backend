@@ -6,5 +6,7 @@
         "password": "tombola",
         "database": "tombola"
     },
-    "secret": "tombola"
+    "secret": "tombola",
+    "certPath": "./cert.pem",
+    "keyPath": "./key.pem"
 }

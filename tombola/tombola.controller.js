@@ -93,7 +93,7 @@ function saveCartella(req, res, next) {
                                         //console.log("tot: "+cartelleCount, "sync'd: "+cartelleSeqCount);
                                         if (cartelleSeqCount == cartelleCount) {
                                             var payload = { seq: session.ultimoSeq, sync: 100 };
-                                            tombolaService.sendToClients(sessionId, 0, "notifySyncStatus", payload);
+                                            tombolaService.sendToClients(sessionId, 0, 0, "notifySyncStatus", payload);
                                             //console.log("all sync'd !", session);
                                             var nuovoRisultato = 1 + (session.ultimoRisultato);
 
@@ -134,7 +134,7 @@ function saveCartella(req, res, next) {
                                                                 .then(sessionUpdated => {
                                                                     // notifico via websocket la vincita
                                                                     var payload = { "winners": winners, "seq": session.ultimoSeq, "result": session.ultimoRisultato};
-                                                                    tombolaService.sendToClients(sessionId, 0, "notifyWinners", payload);
+                                                                    tombolaService.sendToClients(sessionId, 0, 0, "notifyWinners", payload);
                                                                     res.json(result);
                                                                 })
                                                                 .catch(next);

@@ -1,11 +1,11 @@
 {
-    "name": "node-mysql-registration-login-api",
+    "name": "tombola-backend",
     "version": "1.0.0",
-    "description": "Node.js + MySQL API for User Management, Authentication and Registration",
+    "description": "Tombola",
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/cornflourblue/node-mysql-registration-login-api.git"
+        "url": "https://github.com/anxdroid/tombola-backend.git"
     },
     "scripts": {
         "start": "node ./server.js",

@@ -5,6 +5,7 @@ const db = require('_helpers/db');
 var sC = require('../socketCollection');
 const { Op } = require("sequelize");
 const { Sequelize } = require('sequelize');
+const { use } = require('../users/users.controller');
 
 
 module.exports = {
@@ -25,29 +26,44 @@ module.exports = {
   getCartelleSessionSeqResult
 };
 
-function notifyClients(sessionId, userId, message) {
-  //console.log("Notifying for sessionId " + sessionId);
+function searchConnection(sessionId, userId) {
   for (socket of sC.socketCollection) {
     // sessionId = 0 => broadcast
     if (socket.sessionId == sessionId || sessionId == 0) {
       if (userId != socket.userId) {
-        //console.log(message, socket.connection.remoteAddress);
-        socket.connection.sendUTF(message);
+        return socket;
       }
+    }
+  }
+  return null;
+}
+
+function notifyClients(sessionId, userId, message) {
+  //console.log("Notifying for sessionId " + sessionId);
+  if (userId != 0) {
+    socket = searchConnection(sessionId, userId);
+    if (socket != null) {
+      socket.connection.sendUTF(message);
+    }else{
+      console.log("Connection not found !", sessionId+" "+userId);
+    }
+  }else{
+    for (socket of sC.socketCollection) {
+      socket.connection.sendUTF(message);
     }
   }
 }
 
-function sendToClients(sessionId, userId, command, payload) {
+function sendToClients(sessionId, userIdFrom, userIdTo, command, payload) {
   messaggio = {
     sessionId: sessionId,
-    userId: userId,
+    userId: userIdFrom,
     command: command,
     // TODO: gestire i premi
     payload: payload,
     date: new Date()
   };
-  notifyClients(sessionId, userId, JSON.stringify(messaggio));
+  notifyClients(sessionId, userIdTo, JSON.stringify(messaggio));
 }
 
 async function extract(params) {
