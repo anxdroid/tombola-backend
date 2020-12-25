@@ -23,7 +23,8 @@ module.exports = {
   getCartelleSessionCount,
   getCartelleSessionSeq,
   getCartelleSessionSeqCount,
-  getCartelleSessionSeqResult
+  getCartelleSessionSeqResult,
+  searchConnection
 };
 
 function searchConnection(sessionId, userId) {

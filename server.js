@@ -45,13 +45,23 @@ wsServer.on('request', function (request) {
     var tokens = request.resource.split("/");
     var sessionId = +tokens[1];
     var userId = +tokens[2];
-    console.log("New websocket connection", connection.remoteAddresses+" (userId: "+userId+", sessionId: "+sessionId+")")
     // salvo la connessione
-    sC.socketCollection.push({
-        sessionId: sessionId,
-        userId: userId,
-        connection: connection,
-    });
+    socket = tombolaService.searchConnection(sessionId, userId)
+    if (socket == null) {
+        console.log("New websocket connection", connection.remoteAddresses+" (userId: "+userId+", sessionId: "+sessionId+")")
+        sC.socketCollection.push({
+            sessionId: sessionId,
+            userId: userId,
+            connection: connection,
+        });
+    }else{
+        console.log("Resumed websocket connection", connection.remoteAddresses+" (userId: "+userId+", sessionId: "+sessionId+")")
+        socket = {
+            sessionId: sessionId,
+            userId: userId,
+            connection: connection,
+        };
+    }
 
     //console.log("Session ID: "+sessionId+" User ID: "+userId);
     tombolaService.sendToClients(sessionId, 0, 0, "startup", sessionId);
